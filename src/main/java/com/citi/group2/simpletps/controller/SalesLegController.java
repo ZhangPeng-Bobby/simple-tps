@@ -25,8 +25,8 @@ public class SalesLegController {
     }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.PUT)
-    public String updateSalesLeg() {
-        return "PUT NOT IMPLEMENTED";
+    public String updateSalesLeg(@RequestBody SalesLeg salesLeg) {
+        return JSONObject.toJSONString(salesLegService.updateSalesLeg(salesLeg));
     }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.GET)

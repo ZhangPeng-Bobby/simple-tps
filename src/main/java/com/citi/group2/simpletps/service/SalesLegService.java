@@ -21,4 +21,8 @@ public class SalesLegService {
     public int insertSalesLeg(SalesLeg salesLeg) {
         return salesLegMapper.insertSelective(salesLeg);
     }
+
+    public int updateSalesLeg(SalesLeg salesLeg) {
+        return salesLegMapper.updateByPrimaryKeySelective(salesLeg);
+    }
 }
