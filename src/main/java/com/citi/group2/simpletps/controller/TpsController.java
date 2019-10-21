@@ -12,18 +12,8 @@ import java.security.PublicKey;
 @RequestMapping("tps")
 public class TpsController {
 
-    @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
-    public void insertSalesLeg() {
-
-    }
-
     @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
     public void insertTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "sales-leg", method = RequestMethod.PUT)
-    public void updateSalesLeg() {
 
     }
 
@@ -39,11 +29,6 @@ public class TpsController {
 
     @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
     public void getTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "sales-leg", method = RequestMethod.GET)
-    public void getSalesLeg() {
 
     }
 
