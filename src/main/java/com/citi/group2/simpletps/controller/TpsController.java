@@ -51,14 +51,4 @@ public class TpsController {
     public void traderLogin() {
 
     }
-
-    @RequestMapping(value = "all-cusip", method = RequestMethod.GET)
-    public void getAllCusip() {
-
-    }
-
-    @RequestMapping(value = "all-client", method = RequestMethod.GET)
-    public void getAllClient() {
-
-    }
 }
