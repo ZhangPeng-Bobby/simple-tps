@@ -1,7 +1,9 @@
 package com.citi.group2.simpletps.mapper;
 
 import com.citi.group2.simpletps.entity.Trader;
+import org.springframework.stereotype.Repository;
 
+@Repository("TraderMapper")
 public interface TraderMapper {
     int deleteByPrimaryKey(Integer tId);
 

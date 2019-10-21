@@ -1,16 +1,26 @@
 package com.citi.group2.simpletps.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.service.TraderService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.PublicKey;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("tps")
 public class TpsController {
+    private TraderService traderService;
+    @Autowired
+    public TpsController(TraderService traderService){
+        this.traderService = traderService;
+    }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public void insertSalesLeg() {
@@ -48,8 +58,18 @@ public class TpsController {
     }
 
     @RequestMapping(value = "trader-login", method = RequestMethod.POST)
-    public void traderLogin() {
-
+    public Object traderLogin(@RequestBody Trader trader) {
+        Trader traderInDb = traderService.findById(trader.gettId());
+        JSONObject json = new JSONObject();
+        if(traderInDb == null){
+            json.put("message", "user doesn't exist");
+        }else if(!traderService.comparePassword(trader, traderInDb))
+            json.put("message", "wrong password");
+        else {
+            String token = traderService.getToken(traderInDb);
+            json.put("token", token);
+        }
+        return json;
     }
 
     @RequestMapping(value = "all-cusip", method = RequestMethod.GET)
