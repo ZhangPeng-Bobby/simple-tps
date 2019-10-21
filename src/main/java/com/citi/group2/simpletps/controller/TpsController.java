@@ -61,9 +61,4 @@ public class TpsController {
     public void getAllClient() {
 
     }
-
-    @RequestMapping(value = "all-seller", method = RequestMethod.GET)
-    public void getAllSeller() {
-
-    }
 }
