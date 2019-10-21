@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("tps")
-public class tpsController {
+public class TpsController {
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public void insertSalesLeg() {
 
