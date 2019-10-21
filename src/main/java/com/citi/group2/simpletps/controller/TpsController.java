@@ -1,12 +1,17 @@
 package com.citi.group2.simpletps.controller;
 
+import com.citi.group2.simpletps.service.TraderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.PublicKey;
+
 @RestController
 @RequestMapping("tps")
 public class TpsController {
+
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public void insertSalesLeg() {
 
