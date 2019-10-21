@@ -1,6 +1,7 @@
 package com.citi.group2.simpletps.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.citi.group2.simpletps.annotation.LoginRequired;
 import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.service.TraderService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -70,6 +71,12 @@ public class TpsController {
             json.put("token", token);
         }
         return json;
+    }
+
+    @LoginRequired
+    @GetMapping("/test")
+    public Object testLogin() {
+        return "success";
     }
 
     @RequestMapping(value = "all-cusip", method = RequestMethod.GET)
