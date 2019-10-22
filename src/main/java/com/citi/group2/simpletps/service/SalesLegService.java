@@ -25,4 +25,8 @@ public class SalesLegService {
     public int updateSalesLeg(SalesLeg salesLeg) {
         return salesLegMapper.updateByPrimaryKeySelective(salesLeg);
     }
+
+    public Integer getLastInsertId() {
+        return salesLegMapper.getLastInsertId();
+    }
 }

@@ -2,6 +2,7 @@ package com.citi.group2.simpletps.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.citi.group2.simpletps.entity.SalesLeg;
+import com.citi.group2.simpletps.service.LegMatchService;
 import com.citi.group2.simpletps.service.SalesLegService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,19 @@ import java.util.List;
 @RequestMapping("tps")
 public class SalesLegController {
     private SalesLegService salesLegService;
+    private LegMatchService legMatchService;
 
-    public SalesLegController(SalesLegService salesLegService) {
+    public SalesLegController(SalesLegService salesLegService, LegMatchService legMatchService) {
         this.salesLegService = salesLegService;
+        this.legMatchService = legMatchService;
     }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public String insertSalesLeg(@RequestBody SalesLeg salesLeg) {
-        return JSONObject.toJSONString(salesLegService.insertSalesLeg(salesLeg));
+        Integer insertAns = salesLegService.insertSalesLeg(salesLeg);
+        Integer txnId = salesLegService.getLastInsertId();
+        legMatchService.autoMatchSalesLeg(txnId);
+        return JSONObject.toJSONString(insertAns);
     }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.PUT)

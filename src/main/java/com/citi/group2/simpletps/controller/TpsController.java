@@ -24,23 +24,8 @@ public class TpsController {
         this.traderService = traderService;
     }
 
-    @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
-    public void insertTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "trader-leg", method = RequestMethod.PUT)
-    public void updateTraderLeg() {
-
-    }
-
     @RequestMapping(value = "force-match", method = RequestMethod.POST)
     public void forceMatch() {
-
-    }
-
-    @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
-    public void getTraderLeg() {
 
     }
 
