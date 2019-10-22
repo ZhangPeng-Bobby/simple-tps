@@ -34,6 +34,6 @@ public interface SalesLegMapper {
     //get the record with the biggest inter_v_num from DB selectively
     SalesLeg selectNewestSelective(SalesLeg salesLeg);
 
-    @Select({"SELECT LAST_INSERT_ID() FROM sales_leg"})
+    @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
 }

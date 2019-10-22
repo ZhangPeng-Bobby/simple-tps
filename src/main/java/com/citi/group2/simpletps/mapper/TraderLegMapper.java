@@ -35,6 +35,6 @@ public interface TraderLegMapper {
     @Select({"SELECT * FROM trader_leg WHERE t_id=#{t_id}"})
     List<TraderLeg> selectTraderLeg(@Param("t_id") Integer tId);
 
-    @Select({"SELECT LAST_INSERT_ID() FROM trader_leg"})
+    @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
 }
