@@ -24,8 +24,18 @@ public class SalesLegController {
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public String insertSalesLeg(@RequestBody SalesLeg salesLeg) {
+        //insert and get the txnId
         Integer insertAns = salesLegService.insertSalesLeg(salesLeg);
         Integer txnId = salesLegService.getLastInsertId();
+
+        //modify the salesLeg to PENDING and insert again
+        SalesLeg insertedSalesLeg = salesLegService.selectNewestByTxnId(txnId);
+        insertedSalesLeg.setInterVNum(insertedSalesLeg.getInterVNum()+1);
+        insertedSalesLeg.setInterId("SW"+insertedSalesLeg.getInterVNum());
+        insertedSalesLeg.setStatus("PENDING");
+        salesLegService.insertSalesLeg(insertedSalesLeg);
+
+        //auto match
         legMatchService.autoMatchSalesLeg(txnId);
         return JSONObject.toJSONString(insertAns);
     }

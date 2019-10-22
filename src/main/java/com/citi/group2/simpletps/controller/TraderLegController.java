@@ -28,8 +28,18 @@ public class TraderLegController {
     @LoginRequired
     @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
     public String insertTraderLeg(@RequestBody TraderLeg traderLeg) {
+        //insert and get the txnId
         Integer insertAns = traderLegService.insertTraderLeg(traderLeg);
         Integer txnId = traderLegService.getLastInsertId();
+
+        //modify the traderLeg to PENDING and insert again
+        TraderLeg insertedTraderLeg = traderLegService.selectNewestByTxnId(txnId);
+        insertedTraderLeg.setInterVNum(insertedTraderLeg.getInterVNum()+1);
+        insertedTraderLeg.setInterId("SW"+insertedTraderLeg.getInterVNum());
+        insertedTraderLeg.setStatus("PENDING");
+        traderLegService.insertTraderLeg(insertedTraderLeg);
+
+        //auto match
         legMatchService.autoMatchTraderLeg(txnId);
         return JSONObject.toJSONString(insertAns);
     }

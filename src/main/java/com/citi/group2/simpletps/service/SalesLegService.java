@@ -29,4 +29,9 @@ public class SalesLegService {
     public Integer getLastInsertId() {
         return salesLegMapper.getLastInsertId();
     }
+
+    public SalesLeg selectNewestByTxnId(Integer txnId) {
+        return salesLegMapper.selectNewestByTxnId(txnId);
+    }
+
 }

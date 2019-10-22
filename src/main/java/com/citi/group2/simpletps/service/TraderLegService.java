@@ -30,4 +30,8 @@ public class TraderLegService {
     public Integer getLastInsertId() {
         return traderLegMapper.getLastInsertId();
     }
+
+    public TraderLeg selectNewestByTxnId(Integer txnId) {
+        return traderLegMapper.selectNewestByTxnId(txnId);
+    }
 }
