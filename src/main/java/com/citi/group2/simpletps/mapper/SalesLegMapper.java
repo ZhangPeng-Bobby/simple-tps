@@ -27,4 +27,10 @@ public interface SalesLegMapper {
 
     @Select({"SELECT * FROM sales_leg"})
     List<SalesLeg> selectAllSalesLeg();
+
+    //get the record with the biggest inter_v_num from DB
+    SalesLeg selectNewestByTxnId(Integer txnId);
+
+    //get the record with the biggest inter_v_num from DB selectively
+    SalesLeg selectNewestSelective(SalesLeg salesLeg);
 }
