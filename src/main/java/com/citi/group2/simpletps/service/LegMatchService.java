@@ -96,6 +96,7 @@ public class LegMatchService {
         SalesLeg newSalesLeg = null;
         TraderLeg newTraderLeg = null;
 
+        int newSalesLegInserted = 0, newTraderLegInserted = 0;
         if (null != salesLeg && null != traderLeg) {
             if (null == salesLeg.getMatchedTraderLeg() && null == traderLeg.getMatchedSellerLeg()) {
                 //generate new legs
@@ -113,13 +114,13 @@ public class LegMatchService {
                 newSalesLeg.setPrice(newTraderLeg.getPrice());
 
                 //insert the new records
-                salesLegMapper.insertSelective(newSalesLeg);
-                traderLegMapper.insertSelective(newTraderLeg);
+                newSalesLegInserted = salesLegMapper.insertSelective(newSalesLeg);
+                newTraderLegInserted = traderLegMapper.insertSelective(newTraderLeg);
             } else
                 System.out.println("Force match failed because one or two of the legs is already matched");
         } else
             System.out.println("Force match failed due to invalid txnId");
 
-        return false;
+        return 1 == newSalesLegInserted && 1 == newTraderLegInserted;
     }
 }
