@@ -36,12 +36,12 @@ public class LegMatchService {
         if (null != matchedTraderLeg && null == matchedTraderLeg.getMatchedSellerLeg()) {
             //insert updated records
             queriedSalesLeg.setInterVNum(queriedSalesLeg.getInterVNum() + 1);
-            queriedSalesLeg.setInterId("automatch");
+            queriedSalesLeg.setInterId("SW-AM"+queriedSalesLeg.getInterVNum());
             queriedSalesLeg.setMatchedTraderLeg(matchedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(queriedSalesLeg);
 
             matchedTraderLeg.setInterVNum(matchedTraderLeg.getInterVNum() + 1);
-            matchedTraderLeg.setInterId("automatch");
+            matchedTraderLeg.setInterId("SW-AM"+matchedTraderLeg.getInterVNum());
             matchedTraderLeg.setMatchedSellerLeg(queriedSalesLeg.getTxnId());
             int traderLegInserted = traderLegMapper.insert(matchedTraderLeg);
 
@@ -71,12 +71,12 @@ public class LegMatchService {
         if (null != matchedSalesLeg && null == matchedSalesLeg.getMatchedTraderLeg()) {
             //insert updated records
             queriedTraderLeg.setInterVNum(queriedTraderLeg.getInterVNum() + 1);
-            queriedTraderLeg.setInterId("automatch");
+            queriedTraderLeg.setInterId("TW-AM"+queriedTraderLeg.getInterVNum());
             queriedTraderLeg.setMatchedSellerLeg(matchedSalesLeg.getTxnId());
             int traderLegInserted = traderLegMapper.insert(queriedTraderLeg);
 
             matchedSalesLeg.setInterVNum(matchedSalesLeg.getInterVNum() + 1);
-            matchedSalesLeg.setInterId("automatch");
+            matchedSalesLeg.setInterId("TW-AM"+matchedSalesLeg.getInterVNum());
             matchedSalesLeg.setMatchedTraderLeg(queriedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(matchedSalesLeg);
 
@@ -104,10 +104,10 @@ public class LegMatchService {
                 newTraderLeg = traderLeg;
                 newSalesLeg.setMatchedTraderLeg(traderLeg.getTxnId());
                 newTraderLeg.setMatchedSellerLeg(salesLeg.getTxnId());
-                newSalesLeg.setInterId("forceMatch");
-                newTraderLeg.setInterId("forceMatch");
                 newSalesLeg.setInterVNum(newSalesLeg.getInterVNum() + 1);
-                newTraderLeg.setInterVNum(traderLeg.getInterVNum() + 1);
+                newTraderLeg.setInterVNum(newTraderLeg.getInterVNum() + 1);
+                newSalesLeg.setInterId("TW-FM"+ newSalesLeg.getInterVNum());
+                newTraderLeg.setInterId("TW-FM"+newTraderLeg.getInterVNum());
 
                 //modify the generated sales leg according to the generated trader leg
                 newSalesLeg.setNotionalAmount(newTraderLeg.getNotionalAmount());
