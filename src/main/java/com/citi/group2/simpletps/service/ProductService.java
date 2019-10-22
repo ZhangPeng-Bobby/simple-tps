@@ -1,5 +1,6 @@
 package com.citi.group2.simpletps.service;
 
+import com.citi.group2.simpletps.entity.Product;
 import com.citi.group2.simpletps.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,5 +18,9 @@ public class ProductService {
 
     public List<String> getAllCusip() {
         return productMapper.selectAllCusip();
+    }
+
+    public Product getProduct(String cusip) {
+        return productMapper.selectByPrimaryKey(cusip);
     }
 }

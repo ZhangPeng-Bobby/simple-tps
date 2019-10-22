@@ -1,13 +1,13 @@
 package com.citi.group2.simpletps.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.citi.group2.simpletps.entity.Product;
 import com.citi.group2.simpletps.service.ProductService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("tps")
@@ -22,5 +22,10 @@ public class ProductController {
     public String getAllCusip() {
         List<String> cusipList = productService.getAllCusip();
         return JSONObject.toJSONString(cusipList);
+    }
+
+    @RequestMapping(value = "product", method = RequestMethod.GET)
+    public String getProduct(@RequestParam String cusip) {
+        return JSONObject.toJSONString(productService.getProduct(cusip));
     }
 }
