@@ -9,6 +9,7 @@ import com.citi.group2.simpletps.annotation.LoginRequired;
 import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.service.TraderService;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -16,11 +17,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
-    @Autowired
     private TraderService traderService;
 
     public boolean preHandle(HttpServletRequest request,
@@ -62,6 +63,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     throw new RuntimeException("token无效，请重新登录");
                 }
             } catch (UnsupportedEncodingException ignore) {}
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", trader);
             request.setAttribute("currentUser", trader);
             return true;
         }
