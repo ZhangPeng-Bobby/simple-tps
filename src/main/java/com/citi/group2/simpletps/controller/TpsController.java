@@ -24,18 +24,8 @@ public class TpsController {
         this.traderService = traderService;
     }
 
-    @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
-    public void insertSalesLeg() {
-
-    }
-
     @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
     public void insertTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "sales-leg", method = RequestMethod.PUT)
-    public void updateSalesLeg() {
 
     }
 
@@ -51,11 +41,6 @@ public class TpsController {
 
     @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
     public void getTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "sales-leg", method = RequestMethod.GET)
-    public void getSalesLeg() {
 
     }
 
@@ -78,15 +63,5 @@ public class TpsController {
     @GetMapping("/test")
     public Object testCurrentTrader(@CurrentTrader Trader trader) {
         return trader;
-    }
-
-    @RequestMapping(value = "all-cusip", method = RequestMethod.GET)
-    public void getAllCusip() {
-
-    }
-
-    @RequestMapping(value = "all-client", method = RequestMethod.GET)
-    public void getAllClient() {
-
     }
 }

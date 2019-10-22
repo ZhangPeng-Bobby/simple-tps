@@ -34,17 +34,17 @@ CREATE TABLE client
 
 CREATE TABLE trader_leg
 (
-    txn_id             int(11)       NOT NULL,
-    inter_id           varchar(11)   NOT NULL,
-    inter_v_num        int(11)       NOT NULL,
+    txn_id             int(11) AUTO_INCREMENT NOT NULL,
+    inter_id           varchar(11)            NOT NULL,
+    inter_v_num        int(11)                NOT NULL,
     status             varchar(20),
     reject_code        varchar(20),
     reject_reason      text,
     t_id               int(11),
     s_id               int(11),
-    cusip              varchar(9)    NOT NULL,
-    price              decimal(6, 2) NOT NULL DEFAULT '100',
-    notional_amount    int(11)       NOT NULL,
+    cusip              varchar(9)             NOT NULL,
+    price              decimal(6, 2)          NOT NULL DEFAULT '100',
+    notional_amount    int(11)                NOT NULL,
     matched_seller_leg int(11),
     FOREIGN KEY fk_t_id (t_id)
         REFERENCES trader (t_id)
@@ -59,17 +59,17 @@ CREATE TABLE trader_leg
 
 CREATE TABLE sales_leg
 (
-    txn_id             int(11)       NOT NULL,
-    inter_id           varchar(11)   NOT NULL,
-    inter_v_num        int(11)       NOT NULL,
+    txn_id             int(11) AUTO_INCREMENT NOT NULL,
+    inter_id           varchar(11)            NOT NULL,
+    inter_v_num        int(11)                NOT NULL,
     status             varchar(20),
     reject_code        varchar(20),
     reject_reason      text,
     s_id               int(11),
     c_id               int(11),
-    cusip              varchar(9)    NOT NULL,
-    price              decimal(6, 2) NOT NULL DEFAULT '100',
-    notional_amount    int(11)       NOT NULL,
+    cusip              varchar(9)             NOT NULL,
+    price              decimal(6, 2)          NOT NULL DEFAULT '100',
+    notional_amount    int(11)                NOT NULL,
     matched_trader_leg int(11),
     FOREIGN KEY fk_s_id (s_id)
         REFERENCES seller (s_id)
