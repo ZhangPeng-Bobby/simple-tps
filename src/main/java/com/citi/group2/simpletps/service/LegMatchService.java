@@ -1,6 +1,7 @@
 package com.citi.group2.simpletps.service;
 
 import com.citi.group2.simpletps.entity.SalesLeg;
+import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.entity.TraderLeg;
 import com.citi.group2.simpletps.mapper.SalesLegMapper;
 import com.citi.group2.simpletps.mapper.TraderLegMapper;
@@ -44,6 +45,8 @@ public class LegMatchService {
             matchedTraderLeg.setMatchedSellerLeg(queriedSalesLeg.getTxnId());
             int traderLegInserted = traderLegMapper.insert(matchedTraderLeg);
 
+            System.out.println("Auto match: sales leg " + queriedSalesLeg.getTxnId() + " is auto matched with trader leg " + matchedTraderLeg.getTxnId());
+
             return 1 == salesLegInserted && 1 == traderLegInserted;
         }
 
@@ -79,6 +82,43 @@ public class LegMatchService {
 
             return 1 == salesLegInserted && 1 == traderLegInserted;
         }
+
+        System.out.println("Auto match: sales leg " + queriedTraderLeg.getTxnId() + " is auto matched with trader leg" +
+                " " + matchedSalesLeg.getTxnId());
+
+        return false;
+    }
+
+    public Boolean forceMatch(Integer salesLegTxnId, Integer traderLegTxnId) {
+        SalesLeg salesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
+        TraderLeg traderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
+
+        SalesLeg newSalesLeg = null;
+        TraderLeg newTraderLeg = null;
+
+        if (null != salesLeg && null != traderLeg) {
+            if (null == salesLeg.getMatchedTraderLeg() && null == traderLeg.getMatchedSellerLeg()) {
+                //generate new legs
+                newSalesLeg = salesLeg;
+                newTraderLeg = traderLeg;
+                newSalesLeg.setMatchedTraderLeg(traderLeg.getTxnId());
+                newTraderLeg.setMatchedSellerLeg(salesLeg.getTxnId());
+                newSalesLeg.setInterId("forceMatch");
+                newTraderLeg.setInterId("forceMatch");
+                newSalesLeg.setInterVNum(newSalesLeg.getInterVNum() + 1);
+                newTraderLeg.setInterVNum(traderLeg.getInterVNum() + 1);
+
+                //modify the generated sales leg according to the generated trader leg
+                newSalesLeg.setNotionalAmount(newTraderLeg.getNotionalAmount());
+                newSalesLeg.setPrice(newTraderLeg.getPrice());
+
+                //insert the new records
+                salesLegMapper.insertSelective(newSalesLeg);
+                traderLegMapper.insertSelective(newTraderLeg);
+            } else
+                System.out.println("Force match failed because one or two of the legs is already matched");
+        } else
+            System.out.println("Force match failed due to invalid txnId");
 
         return false;
     }
