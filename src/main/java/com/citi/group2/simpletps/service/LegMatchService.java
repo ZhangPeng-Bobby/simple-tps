@@ -91,14 +91,15 @@ public class LegMatchService {
             matchedSalesLeg.setMatchedTraderLeg(queriedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(matchedSalesLeg);
 
+
+            System.out.println("Auto match: sales leg " + queriedTraderLeg.getTxnId() + " is auto matched with trader leg" +
+                    " " + matchedSalesLeg.getTxnId());
+
             if (1 == salesLegInserted && 1 == traderLegInserted) {
                 backOfficeInteraction(matchedSalesLeg.getTxnId(), queriedTraderLeg.getTxnId());
                 return true;
             }
         }
-
-        System.out.println("Auto match: sales leg " + queriedTraderLeg.getTxnId() + " is auto matched with trader leg" +
-                " " + matchedSalesLeg.getTxnId());
 
         return false;
     }
