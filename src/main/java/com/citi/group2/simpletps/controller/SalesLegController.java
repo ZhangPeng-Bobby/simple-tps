@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.citi.group2.simpletps.entity.SalesLeg;
 import com.citi.group2.simpletps.service.LegMatchService;
 import com.citi.group2.simpletps.service.SalesLegService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +19,7 @@ public class SalesLegController {
         this.legMatchService = legMatchService;
     }
 
+    @CrossOrigin
     @RequestMapping(value = "sales-leg", method = RequestMethod.POST)
     public String insertSalesLeg(@RequestBody SalesLeg salesLeg) {
         //insert and get the txnId
@@ -45,6 +43,7 @@ public class SalesLegController {
         return JSONObject.toJSONString(salesLegService.updateSalesLeg(salesLeg));
     }
 
+    @CrossOrigin
     @RequestMapping(value = "sales-leg", method = RequestMethod.GET)
     public String getSalesLeg() {
         List<SalesLeg> salesLegList = salesLegService.getSalesLeg();

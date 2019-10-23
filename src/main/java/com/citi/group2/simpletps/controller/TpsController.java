@@ -29,6 +29,7 @@ public class TpsController {
 
     }
 
+    @CrossOrigin
     @RequestMapping(value = "trader-login", method = RequestMethod.POST)
     public Object traderLogin(@RequestBody Trader trader) {
         Trader traderInDb = traderService.findById(trader.gettId());

@@ -50,6 +50,7 @@ public class TraderLegController {
         return JSONObject.toJSONString(traderLegService.updateTraderLeg(traderLeg));
     }
 
+    @CrossOrigin
     @LoginRequired
     @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
     public String getTraderLeg(@CurrentTrader Trader trader) {
