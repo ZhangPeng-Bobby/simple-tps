@@ -3,6 +3,7 @@ package com.citi.group2.simpletps.mapper;
 import com.citi.group2.simpletps.entity.SalesLeg;
 import com.citi.group2.simpletps.entity.SalesLegKey;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +37,10 @@ public interface SalesLegMapper {
 
     @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
+
+    @Select({"SELECT * FROM sales_leg WHERE txn_id=#{txn_id}"})
+    List<SalesLeg> selectTxnHistory(@Param("txn_id")Integer txnId);
+
 
     @Select({"SELECT *\n" +
             "FROM sales_leg s1\n" +

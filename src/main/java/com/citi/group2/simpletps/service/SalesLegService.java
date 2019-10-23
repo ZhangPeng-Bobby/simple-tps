@@ -34,6 +34,11 @@ public class SalesLegService {
         return salesLegMapper.selectNewestByTxnId(txnId);
     }
 
+    public List<SalesLeg> getTxnHistory(Integer txnId) {
+        return salesLegMapper.selectTxnHistory(txnId);
+    }
+
+
     public List<SalesLeg> getNewestSalesLeg() {
         return salesLegMapper.selectNewestSalesLeg();
     }

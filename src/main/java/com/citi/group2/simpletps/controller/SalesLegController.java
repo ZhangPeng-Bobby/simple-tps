@@ -56,4 +56,11 @@ public class SalesLegController {
         List<SalesLeg> salesLegList = salesLegService.getNewestSalesLeg();
         return JSONObject.toJSONString(salesLegList);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "sw-txn-history", method = RequestMethod.POST)
+    public String getTxnHistory(@RequestBody Integer txnId) {
+        List<SalesLeg> salesLegList = salesLegService.getTxnHistory(txnId);
+        return JSONObject.toJSONString(salesLegList);
+    }
 }
