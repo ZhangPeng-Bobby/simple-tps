@@ -61,7 +61,7 @@ public class TraderLegController {
     @CrossOrigin
     @LoginRequired
     @RequestMapping(value = "tw-txn-history", method = RequestMethod.POST)
-    public String getTxnHistory(@RequestParam Integer txnId) {
+    public String getTxnHistory(@RequestBody Integer txnId) {
         List<TraderLeg> traderLegList = traderLegService.getTxnHistory(txnId);
         return JSONObject.toJSONString(traderLegList);
     }
