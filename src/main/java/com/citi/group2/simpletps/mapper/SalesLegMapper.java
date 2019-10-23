@@ -38,7 +38,7 @@ public interface SalesLegMapper {
     @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
 
-    @Select({"SELECT * FROM sales_leg WHERE txn_id=#{txn_id}"})
+    @Select({"SELECT * FROM sales_leg WHERE txn_id=#{txn_id} ORDER BY inter_v_num"})
     List<SalesLeg> selectTxnHistory(@Param("txn_id")Integer txnId);
 
 
