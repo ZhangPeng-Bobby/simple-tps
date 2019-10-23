@@ -1,5 +1,8 @@
 package com.citi.group2.simpletps.entity;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class Trader {
     private Integer tId;
 
@@ -38,6 +41,27 @@ public class Trader {
     }
 
     public void settPwd(String tPwd) {
-        this.tPwd = tPwd == null ? null : tPwd.trim();
+        String pswHash = pswToHash(tPwd);
+        this.tPwd = pswHash == null ? null : pswHash.trim();
+    }
+
+    private String pswToHash(String psw){
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.update(psw.getBytes());
+            byte[] src = digest.digest();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (byte aSrc : src) {
+                String s = Integer.toHexString(aSrc & 0xFF);
+                if (s.length() < 2) {
+                    stringBuilder.append('0');
+                }
+                stringBuilder.append(s);
+            }
+            return stringBuilder.toString();
+        } catch (NoSuchAlgorithmException ignore) {
+        }
+        return null;
+
     }
 }

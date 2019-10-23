@@ -5,15 +5,8 @@ import com.citi.group2.simpletps.annotation.CurrentTrader;
 import com.citi.group2.simpletps.annotation.LoginRequired;
 import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.service.TraderService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("tps")
@@ -24,23 +17,8 @@ public class TpsController {
         this.traderService = traderService;
     }
 
-    @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
-    public void insertTraderLeg() {
-
-    }
-
-    @RequestMapping(value = "trader-leg", method = RequestMethod.PUT)
-    public void updateTraderLeg() {
-
-    }
-
     @RequestMapping(value = "force-match", method = RequestMethod.POST)
     public void forceMatch() {
-
-    }
-
-    @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
-    public void getTraderLeg() {
 
     }
 
@@ -59,9 +37,8 @@ public class TpsController {
         return json;
     }
 
-    @LoginRequired
     @GetMapping("/test")
-    public Object testCurrentTrader(@CurrentTrader Trader trader) {
-        return trader;
+    public Object testLog() {
+        return 9/0;
     }
 }
