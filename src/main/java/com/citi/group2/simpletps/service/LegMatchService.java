@@ -1,22 +1,31 @@
 package com.citi.group2.simpletps.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.citi.group2.simpletps.entity.Product;
 import com.citi.group2.simpletps.entity.SalesLeg;
-import com.citi.group2.simpletps.entity.Trader;
 import com.citi.group2.simpletps.entity.TraderLeg;
+import com.citi.group2.simpletps.mapper.ProductMapper;
 import com.citi.group2.simpletps.mapper.SalesLegMapper;
 import com.citi.group2.simpletps.mapper.TraderLegMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 @Service
 public class LegMatchService {
     private TraderLegMapper traderLegMapper;
     private SalesLegMapper salesLegMapper;
+    private ProductMapper productMapper;
 
     @Autowired
-    public LegMatchService(TraderLegMapper traderLegMapper, SalesLegMapper salesLegMapper) {
+    public LegMatchService(TraderLegMapper traderLegMapper, SalesLegMapper salesLegMapper, ProductMapper productMapper) {
         this.traderLegMapper = traderLegMapper;
         this.salesLegMapper = salesLegMapper;
+        this.productMapper = productMapper;
     }
 
     public Boolean autoMatchSalesLeg(Integer salesLegTxnId) {
@@ -36,12 +45,12 @@ public class LegMatchService {
         if (null != matchedTraderLeg && null == matchedTraderLeg.getMatchedSellerLeg()) {
             //insert updated records
             queriedSalesLeg.setInterVNum(queriedSalesLeg.getInterVNum() + 1);
-            queriedSalesLeg.setInterId("SW-AM"+queriedSalesLeg.getInterVNum());
+            queriedSalesLeg.setInterId("SW-AM" + queriedSalesLeg.getInterVNum());
             queriedSalesLeg.setMatchedTraderLeg(matchedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(queriedSalesLeg);
 
             matchedTraderLeg.setInterVNum(matchedTraderLeg.getInterVNum() + 1);
-            matchedTraderLeg.setInterId("SW-AM"+matchedTraderLeg.getInterVNum());
+            matchedTraderLeg.setInterId("SW-AM" + matchedTraderLeg.getInterVNum());
             matchedTraderLeg.setMatchedSellerLeg(queriedSalesLeg.getTxnId());
             int traderLegInserted = traderLegMapper.insert(matchedTraderLeg);
 
@@ -71,12 +80,12 @@ public class LegMatchService {
         if (null != matchedSalesLeg && null == matchedSalesLeg.getMatchedTraderLeg()) {
             //insert updated records
             queriedTraderLeg.setInterVNum(queriedTraderLeg.getInterVNum() + 1);
-            queriedTraderLeg.setInterId("TW-AM"+queriedTraderLeg.getInterVNum());
+            queriedTraderLeg.setInterId("TW-AM" + queriedTraderLeg.getInterVNum());
             queriedTraderLeg.setMatchedSellerLeg(matchedSalesLeg.getTxnId());
             int traderLegInserted = traderLegMapper.insert(queriedTraderLeg);
 
             matchedSalesLeg.setInterVNum(matchedSalesLeg.getInterVNum() + 1);
-            matchedSalesLeg.setInterId("TW-AM"+matchedSalesLeg.getInterVNum());
+            matchedSalesLeg.setInterId("TW-AM" + matchedSalesLeg.getInterVNum());
             matchedSalesLeg.setMatchedTraderLeg(queriedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(matchedSalesLeg);
 
@@ -106,8 +115,8 @@ public class LegMatchService {
                 newTraderLeg.setMatchedSellerLeg(salesLeg.getTxnId());
                 newSalesLeg.setInterVNum(newSalesLeg.getInterVNum() + 1);
                 newTraderLeg.setInterVNum(newTraderLeg.getInterVNum() + 1);
-                newSalesLeg.setInterId("TW-FM"+ newSalesLeg.getInterVNum());
-                newTraderLeg.setInterId("TW-FM"+newTraderLeg.getInterVNum());
+                newSalesLeg.setInterId("TW-FM" + newSalesLeg.getInterVNum());
+                newTraderLeg.setInterId("TW-FM" + newTraderLeg.getInterVNum());
 
                 //modify the generated sales leg according to the generated trader leg
                 newSalesLeg.setNotionalAmount(newTraderLeg.getNotionalAmount());
@@ -122,5 +131,95 @@ public class LegMatchService {
             System.out.println("Force match failed due to invalid txnId");
 
         return 1 == newSalesLegInserted && 1 == newTraderLegInserted;
+    }
+
+    public Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
+        SalesLeg salesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
+        TraderLeg traderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
+        Product product = productMapper.selectByPrimaryKey(salesLeg.getCusip());
+
+        //URLs
+        String backOfficeBaseAddress = "http://localhost:8080/back-office";
+        String salesInputAddress = backOfficeBaseAddress + "/sales-leg";
+        String traderInputAddress = backOfficeBaseAddress + "/trader-leg";
+        String productInputAddress = backOfficeBaseAddress + "/product";
+        String validateAddress = backOfficeBaseAddress + "/validate";
+
+        //invoke traderInput
+        try {
+            URL salesInputUrl = new URL(salesInputAddress);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) salesInputUrl.openConnection();
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.connect();
+            OutputStream os = httpURLConnection.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+            osw.write(JSONObject.toJSONString(salesLeg));
+            osw.flush();
+            osw.close();
+            httpURLConnection.getResponseCode();
+            httpURLConnection.getResponseMessage();
+            InputStream is = httpURLConnection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            System.out.println(reader.readLine());
+            System.out.println(httpURLConnection.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //invoke salesInput
+        try {
+            URL traderInputUrl = new URL(traderInputAddress);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) traderInputUrl.openConnection();
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.connect();
+            OutputStream os = httpURLConnection.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+            osw.write(JSONObject.toJSONString(traderLeg));
+            osw.flush();
+            osw.close();
+            httpURLConnection.getResponseCode();
+            httpURLConnection.getResponseMessage();
+            InputStream is = httpURLConnection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            System.out.println(reader.readLine());
+            System.out.println(httpURLConnection.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //invoke productInput
+        try {
+            URL productInputUrl = new URL(productInputAddress);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) productInputUrl.openConnection();
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.connect();
+            OutputStream os = httpURLConnection.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+            osw.write(JSONObject.toJSONString(product));
+            osw.flush();
+            osw.close();
+            httpURLConnection.getResponseCode();
+            httpURLConnection.getResponseMessage();
+            InputStream is = httpURLConnection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            System.out.println(reader.readLine());
+            System.out.println(httpURLConnection.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //invoke validate
+
+
+        return false;
     }
 }

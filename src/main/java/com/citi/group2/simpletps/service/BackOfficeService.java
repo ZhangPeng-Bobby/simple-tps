@@ -13,29 +13,31 @@ public class BackOfficeService {
 
     public String inputTraderLeg(TraderLeg traderLeg) {
         this.traderLeg = traderLeg;
-        return "INPUT SUCCESS";
+        return "TRADER LEG INPUT SUCCESS";
     }
 
     public String inputSalesLeg(SalesLeg salesLeg) {
         this.salesLeg = salesLeg;
-        return "INPUT SUCCESS";
+        return "SALES LEG INPUT SUCCESS";
     }
 
     public String inputProduct(Product product) {
         this.product = product;
-        return "INPUT SUCCESS";
+        return "PRODUCT INPUT SUCCESS";
     }
 
     public String validate() {
-        if (traderLeg == null || salesLeg == null) {
-            return "LEG MISSING";
+        if (traderLeg == null) {
+            return "TRADER LEG MISSING";
+        } else if (salesLeg == null) {
+            return "SALES LEG MISSING";
         } else if (!traderLeg.getNotionalAmount().equals(salesLeg.getNotionalAmount()) ||
                 !traderLeg.getPrice().equals(salesLeg.getPrice())) {
-            return "LEG NOT MATCHING";
+            return "LEGS NOT MATCHING";
         } else if (product != null && traderLeg.getNotionalAmount() > product.getRemaining()) {
             return "NOTIONAL TOO LARGE";
         }
         product = null;
-        return "ACCEPT";
+        return "ACCEPTED";
     }
 }
