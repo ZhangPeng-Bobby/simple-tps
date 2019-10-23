@@ -55,7 +55,10 @@ public class LegMatchService {
 
             System.out.println("Auto match: sales leg " + queriedSalesLeg.getTxnId() + " is auto matched with trader leg " + matchedTraderLeg.getTxnId());
 
-            return 1 == salesLegInserted && 1 == traderLegInserted;
+            if (1 == salesLegInserted && 1 == traderLegInserted) {
+                backOfficeInteraction(queriedSalesLeg.getTxnId(), matchedTraderLeg.getTxnId());
+                return true;
+            }
         }
 
         return false;
@@ -88,7 +91,10 @@ public class LegMatchService {
             matchedSalesLeg.setMatchedTraderLeg(queriedTraderLeg.getTxnId());
             int salesLegInserted = salesLegMapper.insert(matchedSalesLeg);
 
-            return 1 == salesLegInserted && 1 == traderLegInserted;
+            if (1 == salesLegInserted && 1 == traderLegInserted) {
+                backOfficeInteraction(matchedSalesLeg.getTxnId(), queriedTraderLeg.getTxnId());
+                return true;
+            }
         }
 
         System.out.println("Auto match: sales leg " + queriedTraderLeg.getTxnId() + " is auto matched with trader leg" +
@@ -129,11 +135,15 @@ public class LegMatchService {
         } else
             System.out.println("Force match failed due to invalid txnId");
 
-        return 1 == newSalesLegInserted && 1 == newTraderLegInserted;
+        if (1 == newSalesLegInserted && 1 == newTraderLegInserted) {
+            backOfficeInteraction(newSalesLeg.getTxnId(), newTraderLeg.getTxnId());
+            return true;
+        } else
+            return false;
     }
 
     /*@return return true if accepted by the back office*/
-    public Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
+    private Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
         SalesLeg salesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
         TraderLeg traderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
         Product product = productMapper.selectByPrimaryKey(salesLeg.getCusip());
