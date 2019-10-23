@@ -60,6 +60,15 @@ public class TraderLegController {
 
     @CrossOrigin
     @LoginRequired
+    @RequestMapping(value = "newest-trader-leg", method = RequestMethod.GET)
+    public String getNewestTraderLeg(@CurrentTrader Trader trader){
+        List<TraderLeg> traderLegList = traderLegService.getNewestTraderLeg(trader);
+        return JSONObject.toJSONString(traderLegList);
+    }
+
+
+    @CrossOrigin
+    @LoginRequired
     @RequestMapping(value = "tw-txn-history", method = RequestMethod.POST)
     public String getTxnHistory(@RequestBody Integer txnId) {
         List<TraderLeg> traderLegList = traderLegService.getTxnHistory(txnId);

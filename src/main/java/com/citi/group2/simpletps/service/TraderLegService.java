@@ -38,4 +38,8 @@ public class TraderLegService {
     public List<TraderLeg> getTxnHistory(Integer txnId) {
         return traderLegMapper.selectTxnHistory(txnId);
     }
+
+    public List<TraderLeg> getNewestTraderLeg(Trader trader) {
+        return traderLegMapper.selectNewest(trader.gettId());
+    }
 }

@@ -40,4 +40,12 @@ public interface TraderLegMapper {
 
     @Select({"SELECT * FROM trader_leg WHERE txn_id=#{txn_id}"})
     List<TraderLeg> selectTxnHistory(@Param("txn_id")Integer txnId);
+
+    @Select({"SELECT *\n" +
+            "FROM trader_leg t1\n" +
+            "WHERE t1.t_id=#{t_id} AND inter_v_num = (\n" +
+            "    SELECT max(inter_v_num)\n" +
+            "    FROM trader_leg t2\n" +
+            "    WHERE t2.txn_id = t1.txn_id);"})
+    List<TraderLeg> selectNewest(@Param("t_id") Integer tId);
 }
