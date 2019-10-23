@@ -24,6 +24,16 @@ public class TpsController {
         this.traderService = traderService;
     }
 
+    @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
+    public void insertTraderLeg() {
+
+    }
+
+    @RequestMapping(value = "trader-leg", method = RequestMethod.PUT)
+    public void updateTraderLeg() {
+
+    }
+
     @RequestMapping(value = "force-match", method = RequestMethod.POST)
     public void forceMatch() {
 
@@ -47,7 +57,7 @@ public class TpsController {
 
     @LoginRequired
     @GetMapping("/test")
-    public Object testCurrentTrader(@CurrentTrader Trader trader) {
-        return trader;
+    public Object testLog() {
+        return 9/0;
     }
 }
