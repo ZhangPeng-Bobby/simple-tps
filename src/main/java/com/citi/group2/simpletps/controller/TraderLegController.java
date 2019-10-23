@@ -27,8 +27,9 @@ public class TraderLegController {
 
     @LoginRequired
     @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
-    public String insertTraderLeg(@RequestBody TraderLeg traderLeg) {
+    public String insertTraderLeg(@CurrentTrader Trader trader, @RequestBody TraderLeg traderLeg) {
         //insert and get the txnId
+        traderLeg.settId(trader.gettId());
         Integer insertAns = traderLegService.insertTraderLeg(traderLeg);
         Integer txnId = traderLegService.getLastInsertId();
 
@@ -61,7 +62,7 @@ public class TraderLegController {
     @CrossOrigin
     @LoginRequired
     @RequestMapping(value = "newest-trader-leg", method = RequestMethod.GET)
-    public String getNewestTraderLeg(@CurrentTrader Trader trader){
+    public String getNewestTraderLeg(@CurrentTrader Trader trader) {
         List<TraderLeg> traderLegList = traderLegService.getNewestTraderLeg(trader);
         return JSONObject.toJSONString(traderLegList);
     }
