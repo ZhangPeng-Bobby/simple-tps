@@ -28,10 +28,4 @@ public class LegMatchTestController {
     public Boolean forceMatch(@RequestParam Integer traderLegTxnId, @RequestParam Integer salesLegTxnId) {
         return legMatchService.forceMatch(salesLegTxnId, traderLegTxnId);
     }
-
-
-    @RequestMapping(value = "BoTest", method = RequestMethod.GET)
-    public Boolean test() {
-        return legMatchService.backOfficeInteraction(1, 1);
-    }
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 @Service
@@ -133,6 +132,7 @@ public class LegMatchService {
         return 1 == newSalesLegInserted && 1 == newTraderLegInserted;
     }
 
+    /*@return return true if accepted by the back office*/
     public Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
         SalesLeg salesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
         TraderLeg traderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
@@ -145,7 +145,10 @@ public class LegMatchService {
         String productInputAddress = backOfficeBaseAddress + "/product";
         String validateAddress = backOfficeBaseAddress + "/validate";
 
-        //invoke traderInput
+        //messages
+        String salesInputResult = null, traderInputResult = null, productInputResult = null, validateResult = null;
+
+        //invoke salesInput
         try {
             URL salesInputUrl = new URL(salesInputAddress);
             HttpURLConnection httpURLConnection = (HttpURLConnection) salesInputUrl.openConnection();
@@ -163,13 +166,13 @@ public class LegMatchService {
             httpURLConnection.getResponseMessage();
             InputStream is = httpURLConnection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            System.out.println(reader.readLine());
-            System.out.println(httpURLConnection.getInputStream());
+            salesInputResult = reader.readLine();
+            System.out.println("salesInputResult: " + salesInputResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //invoke salesInput
+        //invoke traderInput
         try {
             URL traderInputUrl = new URL(traderInputAddress);
             HttpURLConnection httpURLConnection = (HttpURLConnection) traderInputUrl.openConnection();
@@ -183,12 +186,12 @@ public class LegMatchService {
             osw.write(JSONObject.toJSONString(traderLeg));
             osw.flush();
             osw.close();
-            httpURLConnection.getResponseCode();
-            httpURLConnection.getResponseMessage();
+//            httpURLConnection.getResponseCode();
+//            httpURLConnection.getResponseMessage();
             InputStream is = httpURLConnection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            System.out.println(reader.readLine());
-            System.out.println(httpURLConnection.getInputStream());
+            traderInputResult = reader.readLine();
+            System.out.println("traderInputResult: " + traderInputResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -207,19 +210,93 @@ public class LegMatchService {
             osw.write(JSONObject.toJSONString(product));
             osw.flush();
             osw.close();
-            httpURLConnection.getResponseCode();
-            httpURLConnection.getResponseMessage();
+//            httpURLConnection.getResponseCode();
+//            httpURLConnection.getResponseMessage();
             InputStream is = httpURLConnection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            System.out.println(reader.readLine());
-            System.out.println(httpURLConnection.getInputStream());
+            productInputResult = reader.readLine();
+            System.out.println("productInputResult: " + productInputResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         //invoke validate
+        try {
+            URL productInputUrl = new URL(validateAddress);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) productInputUrl.openConnection();
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.connect();
+            InputStream is = httpURLConnection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            validateResult = reader.readLine();
+            System.out.println("validateAddress: " + validateResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
-        return false;
+        //check bo result and insert processed records
+        if (null == salesInputResult || null == traderInputResult || null == productInputResult || null == validateResult) {
+            return false;
+        } else if (salesInputResult.equals("\"SALES LEG INPUT SUCCESS\"") && traderInputResult.equals("\"TRADER LEG " +
+                "INPUT SUCCESS\"") && productInputResult.equals("\"PRODUCT INPUT SUCCESS\"")) {
+            //insert processed sales leg
+            SalesLeg processedSalesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
+            processedSalesLeg.setStatus("PROCESSED");
+            processedSalesLeg.setInterVNum(processedSalesLeg.getInterVNum() + 1);
+            processedSalesLeg.setInterId("BO-PC" + processedSalesLeg.getInterVNum());
+            salesLegMapper.insertSelective(processedSalesLeg);
+
+            //insert processed trader leg
+            TraderLeg processedTraderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
+            processedTraderLeg.setStatus("PROCESSED");
+            processedTraderLeg.setInterVNum(processedTraderLeg.getInterVNum() + 1);
+            processedTraderLeg.setInterId("BO-PC" + processedTraderLeg.getInterVNum());
+            traderLegMapper.insertSelective(processedTraderLeg);
+        }
+
+        if (validateResult.equals("\"ACCEPTED\"")) {//if accepted by BO
+            //insert accepted sales leg
+            SalesLeg acceptedSalesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
+            acceptedSalesLeg.setStatus("ACCEPTED");
+            acceptedSalesLeg.setInterVNum(acceptedSalesLeg.getInterVNum() + 1);
+            acceptedSalesLeg.setInterId("BO-AC" + acceptedSalesLeg.getInterVNum());
+            salesLegMapper.insertSelective(acceptedSalesLeg);
+
+            //insert accepted trader leg
+            TraderLeg acceptedTraderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
+            acceptedTraderLeg.setStatus("ACCEPTED");
+            acceptedTraderLeg.setInterVNum(acceptedTraderLeg.getInterVNum() + 1);
+            acceptedTraderLeg.setInterId("BO-AC" + acceptedTraderLeg.getInterVNum());
+            traderLegMapper.insertSelective(acceptedTraderLeg);
+
+            //update product remaining
+            Product processedProduct = productMapper.selectByPrimaryKey(salesLeg.getCusip());
+            processedProduct.setRemaining(processedProduct.getRemaining() - acceptedTraderLeg.getNotionalAmount());
+            productMapper.updateByPrimaryKey(processedProduct);
+
+            return true;
+        } else {//if not accepted by BO (validateResult.equals("\"NOTIONAL TOO LARGE\""))
+            //insert rejected sales leg
+            SalesLeg rejectedSalesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
+            rejectedSalesLeg.setStatus("REJECTED");
+            rejectedSalesLeg.setRejectCode(validateResult);
+            rejectedSalesLeg.setRejectReason(validateAddress + ": Not enough notional left to sell");
+            rejectedSalesLeg.setInterVNum(rejectedSalesLeg.getInterVNum() + 1);
+            rejectedSalesLeg.setInterId("BO-RJ" + rejectedSalesLeg.getInterVNum());
+            salesLegMapper.insertSelective(rejectedSalesLeg);
+
+            //insert rejected trader leg
+            TraderLeg rejectedTraderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
+            rejectedTraderLeg.setStatus("REJECTED");
+            rejectedTraderLeg.setRejectCode(validateResult);
+            rejectedTraderLeg.setRejectReason(validateAddress + ": Not enough notional left to sell");
+            rejectedTraderLeg.setInterVNum(rejectedTraderLeg.getInterVNum() + 1);
+            rejectedTraderLeg.setInterId("BO-RJ" + rejectedTraderLeg.getInterVNum());
+            traderLegMapper.insertSelective(rejectedTraderLeg);
+
+            return true;
+        }
     }
 }
