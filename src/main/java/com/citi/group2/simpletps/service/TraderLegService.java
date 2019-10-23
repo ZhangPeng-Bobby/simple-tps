@@ -34,4 +34,8 @@ public class TraderLegService {
     public TraderLeg selectNewestByTxnId(Integer txnId) {
         return traderLegMapper.selectNewestByTxnId(txnId);
     }
+
+    public List<TraderLeg> getTxnHistory(Integer txnId) {
+        return traderLegMapper.selectTxnHistory(txnId);
+    }
 }

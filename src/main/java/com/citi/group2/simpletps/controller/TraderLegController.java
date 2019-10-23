@@ -34,8 +34,8 @@ public class TraderLegController {
 
         //modify the traderLeg to PENDING and insert again
         TraderLeg insertedTraderLeg = traderLegService.selectNewestByTxnId(txnId);
-        insertedTraderLeg.setInterVNum(insertedTraderLeg.getInterVNum()+1);
-        insertedTraderLeg.setInterId("SW"+insertedTraderLeg.getInterVNum());
+        insertedTraderLeg.setInterVNum(insertedTraderLeg.getInterVNum() + 1);
+        insertedTraderLeg.setInterId("SW" + insertedTraderLeg.getInterVNum());
         insertedTraderLeg.setStatus("PENDING");
         traderLegService.insertTraderLeg(insertedTraderLeg);
 
@@ -55,6 +55,14 @@ public class TraderLegController {
     @RequestMapping(value = "trader-leg", method = RequestMethod.GET)
     public String getTraderLeg(@CurrentTrader Trader trader) {
         List<TraderLeg> traderLegList = traderLegService.getTraderLeg(trader);
+        return JSONObject.toJSONString(traderLegList);
+    }
+
+    @CrossOrigin
+    @LoginRequired
+    @RequestMapping(value = "tw-txn-history", method = RequestMethod.POST)
+    public String getTxnHistory(@RequestParam Integer txnId) {
+        List<TraderLeg> traderLegList = traderLegService.getTxnHistory(txnId);
         return JSONObject.toJSONString(traderLegList);
     }
 }

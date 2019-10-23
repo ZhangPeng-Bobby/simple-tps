@@ -37,4 +37,7 @@ public interface TraderLegMapper {
 
     @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
+
+    @Select({"SELECT * FROM trader_leg WHERE txn_id=#{txn_id}"})
+    List<TraderLeg> selectTxnHistory(@Param("txn_id")Integer txnId);
 }
