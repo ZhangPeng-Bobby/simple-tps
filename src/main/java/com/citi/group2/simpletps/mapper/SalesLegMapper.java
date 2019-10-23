@@ -36,4 +36,12 @@ public interface SalesLegMapper {
 
     @Select({"SELECT LAST_INSERT_ID()"})
     Integer getLastInsertId();
+
+    @Select({"SELECT *\n" +
+            "FROM sales_leg s1\n" +
+            "WHERE inter_v_num = (\n" +
+            "    SELECT max(inter_v_num)\n" +
+            "    FROM sales_leg s2\n" +
+            "    WHERE s2.txn_id = s1.txn_id);"})
+    List<SalesLeg> selectNewestSalesLeg();
 }

@@ -28,8 +28,8 @@ public class SalesLegController {
 
         //modify the salesLeg to PENDING and insert again
         SalesLeg insertedSalesLeg = salesLegService.selectNewestByTxnId(txnId);
-        insertedSalesLeg.setInterVNum(insertedSalesLeg.getInterVNum()+1);
-        insertedSalesLeg.setInterId("SW"+insertedSalesLeg.getInterVNum());
+        insertedSalesLeg.setInterVNum(insertedSalesLeg.getInterVNum() + 1);
+        insertedSalesLeg.setInterId("SW" + insertedSalesLeg.getInterVNum());
         insertedSalesLeg.setStatus("PENDING");
         salesLegService.insertSalesLeg(insertedSalesLeg);
 
@@ -47,6 +47,13 @@ public class SalesLegController {
     @RequestMapping(value = "sales-leg", method = RequestMethod.GET)
     public String getSalesLeg() {
         List<SalesLeg> salesLegList = salesLegService.getSalesLeg();
+        return JSONObject.toJSONString(salesLegList);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "newest-sales-leg", method = RequestMethod.GET)
+    public String getNewestSalesLeg() {
+        List<SalesLeg> salesLegList = salesLegService.getNewestSalesLeg();
         return JSONObject.toJSONString(salesLegList);
     }
 }
