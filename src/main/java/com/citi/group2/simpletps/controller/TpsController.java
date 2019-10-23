@@ -20,6 +20,7 @@ public class TpsController {
         this.legMatchService = legMatchService;
     }
 
+    @CrossOrigin
     @RequestMapping(value = "force-match", method = RequestMethod.GET)
     public Boolean forceMatch(@RequestParam Integer traderLegTxnId, @RequestParam Integer salesLegTxnId) {
         return legMatchService.forceMatch(salesLegTxnId, traderLegTxnId);

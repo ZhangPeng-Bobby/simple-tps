@@ -25,6 +25,7 @@ public class TraderLegController {
         this.legMatchService = legMatchService;
     }
 
+    @CrossOrigin
     @LoginRequired
     @RequestMapping(value = "trader-leg", method = RequestMethod.POST)
     public String insertTraderLeg(@CurrentTrader Trader trader, @RequestBody TraderLeg traderLeg) {
