@@ -26,16 +26,20 @@ public class SalesLegController {
         Integer insertAns = salesLegService.insertSalesLeg(salesLeg);
         Integer txnId = salesLegService.getLastInsertId();
 
-        //modify the salesLeg to PENDING and insert again
-        SalesLeg insertedSalesLeg = salesLegService.selectNewestByTxnId(txnId);
-        insertedSalesLeg.setInterVNum(insertedSalesLeg.getInterVNum() + 1);
-        insertedSalesLeg.setInterId("SW" + insertedSalesLeg.getInterVNum());
-        insertedSalesLeg.setStatus("PENDING");
-        salesLegService.insertSalesLeg(insertedSalesLeg);
+        if (salesLeg.getStatus().equals("REQUESTED")) {
+            //modify the salesLeg to PENDING and insert again if the txn is newly generated
+            SalesLeg insertedSalesLeg = salesLegService.selectNewestByTxnId(txnId);
+            insertedSalesLeg.setInterVNum(insertedSalesLeg.getInterVNum() + 1);
+            insertedSalesLeg.setInterId("SW" + insertedSalesLeg.getInterVNum());
+            insertedSalesLeg.setStatus("PENDING");
+            salesLegService.insertSalesLeg(insertedSalesLeg);
+        }
 
         //auto match
-        legMatchService.autoMatchSalesLeg(txnId);
-        return JSONObject.toJSONString(insertAns);
+        if (legMatchService.autoMatchSalesLeg(txnId)) {
+            return JSONObject.toJSONString(2);
+        } else
+            return JSONObject.toJSONString(1);
     }
 
     @RequestMapping(value = "sales-leg", method = RequestMethod.PUT)

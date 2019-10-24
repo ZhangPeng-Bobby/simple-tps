@@ -34,16 +34,21 @@ public class TraderLegController {
         Integer insertAns = traderLegService.insertTraderLeg(traderLeg);
         Integer txnId = traderLegService.getLastInsertId();
 
-        //modify the traderLeg to PENDING and insert again
-        TraderLeg insertedTraderLeg = traderLegService.selectNewestByTxnId(txnId);
-        insertedTraderLeg.setInterVNum(insertedTraderLeg.getInterVNum() + 1);
-        insertedTraderLeg.setInterId("SW" + insertedTraderLeg.getInterVNum());
-        insertedTraderLeg.setStatus("PENDING");
-        traderLegService.insertTraderLeg(insertedTraderLeg);
+        //modify the traderLeg to PENDING and insert again if the txn is newly generated
+        if (traderLeg.getStatus().equals("REQUESTED")) {
+            System.out.println("inserted record has the status of REQUESTED, inserting a PENDING record as well");
+            TraderLeg insertedTraderLeg = traderLegService.selectNewestByTxnId(txnId);
+            insertedTraderLeg.setInterVNum(insertedTraderLeg.getInterVNum() + 1);
+            insertedTraderLeg.setInterId("SW" + insertedTraderLeg.getInterVNum());
+            insertedTraderLeg.setStatus("PENDING");
+            traderLegService.insertTraderLeg(insertedTraderLeg);
+        }
 
         //auto match
-        legMatchService.autoMatchTraderLeg(txnId);
-        return JSONObject.toJSONString(insertAns);
+        if (legMatchService.autoMatchTraderLeg(txnId)) {
+            return JSONObject.toJSONString(2);
+        } else
+            return JSONObject.toJSONString(1);
     }
 
     @LoginRequired
