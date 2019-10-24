@@ -150,7 +150,7 @@ public class LegMatchService {
         Product product = productMapper.selectByPrimaryKey(salesLeg.getCusip());
 
         //URLs
-        String backOfficeBaseAddress = "http://localhost:8080/back-office";
+        String backOfficeBaseAddress = "http://localhost:1111/back-office";
         String salesInputAddress = backOfficeBaseAddress + "/sales-leg";
         String traderInputAddress = backOfficeBaseAddress + "/trader-leg";
         String productInputAddress = backOfficeBaseAddress + "/product";

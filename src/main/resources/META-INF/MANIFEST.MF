@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Main-Class: com.citi.group2.simpletps.SimpleTpsApplication
+Class-Path: mybatis-spring-2.0.2.jar spring-webmvc-5.2.0.RELEASE.jar spr
+ ing-boot-starter-tomcat-2.2.0.RELEASE.jar mybatis-3.5.2.jar jul-to-slf4
+ j-1.7.28.jar logback-classic-1.2.3.jar tomcat-embed-el-9.0.27.jar commo
+ ns-lang-2.6.jar mybatis-spring-boot-autoconfigure-2.1.0.jar spring-bean
+ s-5.2.0.RELEASE.jar spring-boot-autoconfigure-2.2.0.RELEASE.jar spring-
+ tx-5.2.0.RELEASE.jar bcprov-jdk15on-1.55.jar spring-jdbc-5.2.0.RELEASE.
+ jar log4j-to-slf4j-2.12.1.jar spring-boot-starter-json-2.2.0.RELEASE.ja
+ r spring-boot-starter-validation-2.2.0.RELEASE.jar spring-boot-2.2.0.RE
+ LEASE.jar logback-core-1.2.3.jar jakarta.annotation-api-1.3.5.jar sprin
+ g-boot-configuration-processor-2.2.0.RELEASE.jar jackson-databind-2.10.
+ 0.jar fastjson-1.2.62.jar lombok-1.18.10.jar spring-boot-starter-loggin
+ g-2.2.0.RELEASE.jar spring-web-5.2.0.RELEASE.jar spring-core-5.2.0.RELE
+ ASE.jar spring-boot-starter-2.2.0.RELEASE.jar jackson-core-2.10.0.jar j
+ akarta.validation-api-2.0.1.jar jackson-datatype-jsr310-2.10.0.jar hibe
+ rnate-validator-6.0.17.Final.jar slf4j-api-1.7.28.jar jackson-module-pa
+ rameter-names-2.10.0.jar spring-boot-devtools-2.2.0.RELEASE.jar java-jw
+ t-3.0.2.jar spring-jcl-5.2.0.RELEASE.jar spring-aop-5.2.0.RELEASE.jar l
+ og4j-api-2.12.1.jar jboss-logging-3.4.1.Final.jar spring-context-5.2.0.
+ RELEASE.jar spring-expression-5.2.0.RELEASE.jar spring-boot-starter-web
+ -2.2.0.RELEASE.jar tomcat-embed-core-9.0.27.jar tomcat-embed-websocket-
+ 9.0.27.jar snakeyaml-1.25.jar mysql-connector-java-8.0.18.jar classmate
+ -1.5.0.jar HikariCP-3.4.1.jar jackson-datatype-jdk8-2.10.0.jar jackson-
+ annotations-2.10.0.jar mybatis-spring-boot-starter-2.1.0.jar commons-co
+ dec-1.13.jar spring-boot-starter-jdbc-2.2.0.RELEASE.jar
+
