@@ -51,6 +51,13 @@ public class TraderLegController {
             return JSONObject.toJSONString(1);
     }
 
+    @CrossOrigin
+    @LoginRequired
+    @RequestMapping(value = "matched-trader-leg", method = RequestMethod.POST)
+    public Boolean updateMatchedTraderLeg(@CurrentTrader Trader trader, @RequestBody TraderLeg traderLeg) {
+        return traderLegService.updateMatchedTraderLeg(traderLeg);
+    }
+
     @LoginRequired
     @RequestMapping(value = "trader-leg", method = RequestMethod.PUT)
     public String updateTraderLeg(@RequestBody TraderLeg traderLeg) {

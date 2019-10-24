@@ -144,7 +144,7 @@ public class LegMatchService {
     }
 
     /*@return return true if accepted by the back office*/
-    private Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
+    Boolean backOfficeInteraction(Integer salesLegTxnId, Integer traderLegTxnId) {
         SalesLeg salesLeg = salesLegMapper.selectNewestByTxnId(salesLegTxnId);
         TraderLeg traderLeg = traderLegMapper.selectNewestByTxnId(traderLegTxnId);
         Product product = productMapper.selectByPrimaryKey(salesLeg.getCusip());
